@@ -1,9 +1,7 @@
 using System.ComponentModel;
 
-namespace pokemonReviewApp.Models
-{
-  public enum PokemonType
-  {
+namespace pokemonReviewApp.Models {
+  public enum PokemonType {
     [Description("Normal")]
     Normal,
     [Description("Fire")]
