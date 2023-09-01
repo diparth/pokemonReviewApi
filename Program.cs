@@ -16,7 +16,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Add DB Connection to the builder
-builder.Services.AddDbContext<DataContext>(options => 
+builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
@@ -31,7 +31,7 @@ if (args.Length == 1 && args[0].ToLower() == "seeddata")
 void SeedData(IHost app)
 {
     var scopedFactory = app.Services.GetService<IServiceScopeFactory>();
-    
+
     using (var scope = scopedFactory.CreateScope())
     {
         var service = scope.ServiceProvider.GetService<Seed>();
@@ -40,7 +40,8 @@ void SeedData(IHost app)
 }
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment()) {
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
 }
