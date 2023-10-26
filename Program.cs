@@ -8,16 +8,21 @@ using pokemonReviewApp.Repository;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-
 builder.Services.AddTransient<Seed>();
 
+
+// Scoped Repositories
 builder.Services.AddScoped<IPokemonRepository, PokemonRepository>();
+
+// Wire up Auto Mapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 // Add DB Connection to the builder
 builder.Services.AddDbContext<DataContext>(options =>
@@ -39,7 +44,7 @@ void SeedData(IHost app)
     using (var scope = scopedFactory.CreateScope())
     {
         var service = scope.ServiceProvider.GetService<Seed>();
-        service.SeeDataContext();
+        service.SeedDataContext();
     }
 }
 
@@ -57,7 +62,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 var poke = new Pokemon();
-poke.Display();
 
 app.Run();
 

@@ -1,4 +1,6 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using pokemonReviewApp.Dto;
 using pokemonReviewApp.Interfaces;
 using pokemonReviewApp.Models;
 
@@ -9,17 +11,20 @@ namespace pokemonReviewApp.Controllers
   public class PokemonController : Controller
   {
     private readonly IPokemonRepository _pokemonRepository;
+    private readonly IMapper _mapper;
     
-    public PokemonController(IPokemonRepository pokemonRepository)
+    
+    public PokemonController(IPokemonRepository pokemonRepository, IMapper mapper)
     {
       this._pokemonRepository = pokemonRepository;
+      this._mapper = mapper;
     }
     
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(IEnumerable<Pokemon>))]
     public IActionResult GetPokemons()
     {
-      var pokemons = this._pokemonRepository.GetPokemons();
+      var pokemons = this._mapper.Map<List<PokemonDto>>(this._pokemonRepository.GetPokemons());
       
       if(!ModelState.IsValid)
       {
@@ -27,6 +32,46 @@ namespace pokemonReviewApp.Controllers
       }
       
       return Ok(pokemons);
+    }
+    
+    [HttpGet("{pokeId}")]
+    [ProducesResponseType(200, Type = typeof(Pokemon))]
+    [ProducesResponseType(400)]
+    public IActionResult GetPokemon(int pokeId)
+    {
+      if (!this._pokemonRepository.PokemonExists(pokeId))
+      {
+        return NotFound();
+      }
+      
+      var pokemon = this._pokemonRepository.GetPokemon(pokeId);
+      
+      if (!ModelState.IsValid)
+      {
+        return BadRequest(ModelState);
+      }
+      
+      return Ok(pokemon);
+    }
+    
+    [HttpGet("{pokeId}/rating")]
+    [ProducesResponseType(200, Type = typeof(decimal))]
+    [ProducesResponseType(400)]
+    public IActionResult GetPokemonRating(int pokeId)
+    {
+      if (!this._pokemonRepository.PokemonExists(pokeId))
+      {
+        return NotFound();
+      }
+      
+      var rating = this._pokemonRepository.GetPokemonRating(pokeId);
+      
+      if (!ModelState.IsValid)
+      {
+        return BadRequest(ModelState);
+      }
+      
+      return Ok(rating);
     }
   }
 }
